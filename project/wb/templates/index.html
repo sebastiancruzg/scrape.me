@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>scrape.me!</title>
+</head>
+<body>
+    <h1>Scrape.me!</h1>
+    <form id="scrapeForm" method="POST" action="{% url 'scrape' %}">
+        {% csrf_token %}
+        <input type="text" name="search_query" id="searchQuery" placeholder="Generate...">
+        <input type="hidden" name="resource_tag" id="resourceTag" value="{{ resource_tag }}">
+        <button type="button" onclick="submitForm()">Generate CSV file</button>
+    </form>
+
+    <section>
+        <div style="grid-column: auto;">
+            {% for resource in resources %}
+                <div onclick="selectResource('{{ resource.tag }}')" style="cursor: pointer;">
+                    <h3>{{ resource.tag }}</h3>
+                    <img src="{{ resource.image.url }}" alt="{{ resource.tag }}" width="100" />
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <script>
+        function selectResource(tag) {
+            // Set the resource tag in the hidden input
+            document.getElementById('resourceTag').value = tag;
+        }
+
+        function submitForm() {
+            const resourceTag = document.getElementById('resourceTag').value;
+            const searchQuery = document.getElementById('searchQuery').value.trim()
+            if ((searchQuery.trim()).length <= 2){
+                alert("Please enter a search query longer than 2 characters.")
+            }
+            if (resourceTag) {
+                // If a resource is selected, submit the form
+                document.getElementById('scrapeForm').submit();
+            } else {
+                // If no resource is selected, alert the user
+                alert("Please select a resource before generating the CSV file.");
+            }
+        }
+    </script>
+</body>
+</html>
